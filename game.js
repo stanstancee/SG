@@ -1,4 +1,5 @@
-
+let btns = document.querySelectorAll(".btn");
+let levelTitle = document.querySelector("#level-title");
 var buttonColours = ["red", "blue", "green", "yellow"];
 
 var gamePattern = [];
@@ -7,24 +8,26 @@ var userClickedPattern = [];
 var started = false;
 var level = 0;
 
-$(document).keypress(function() {
+document.querySelector("body").addEventListener("keypress",function() {
   if (!started) {
-    $("#level-title").text("Level " + level);
+    levelTitle.textContent ="Level " + level;
     nextSequence();
     started = true;
   }
 });
+btns.forEach(btn=>{
+  btn.addEventListener( "click",function() {
 
-$(".btn").click(function() {
+    var userChosenColour = btn.getAttribute("id");
+    userClickedPattern.push(userChosenColour);
+  
+    playSound(userChosenColour);
+    animatePress(userChosenColour);
+  
+    checkAnswer(userClickedPattern.length-1);
+  });
+})
 
-  var userChosenColour = $(this).attr("id");
-  userClickedPattern.push(userChosenColour);
-
-  playSound(userChosenColour);
-  animatePress(userChosenColour);
-
-  checkAnswer(userClickedPattern.length-1);
-});
 
 
 function checkAnswer(currentLevel) {
@@ -44,13 +47,13 @@ function checkAnswer(currentLevel) {
       console.log("wrong");
 
       playSound("wrong");
-
-      $("body").addClass("game-over");
+   let body = document.querySelector("body")
+      body.classList.add("game-over");
       setTimeout(function () {
-        $("body").removeClass("game-over");
+       body.classList.remove("game-over");
       }, 200);
 
-      $("#level-title").text("Game Over, Press Any Key to Restart");
+     levelTitle.textContent="Game Over, Press Any Key to Restart";
 
       //2. Call startOver() if the user gets the sequence wrong.
       startOver();
@@ -62,13 +65,13 @@ function nextSequence() {
 
   userClickedPattern = [];
   level++;
-  $("#level-title").text("Level " + level);
+  levelTitle.textContent ="Level " + level;
 
   var randomNumber = Math.floor(Math.random() * 4);
   var randomChosenColour = buttonColours[randomNumber];
   gamePattern.push(randomChosenColour);
 
-  $("#" + randomChosenColour).fadeIn(100).fadeOut(100).fadeIn(100);
+  document.querySelector("#" + randomChosenColour).classList.add("run");
   playSound(randomChosenColour);
 }
 
@@ -78,9 +81,9 @@ function playSound(name) {
 }
 
 function animatePress(currentColor) {
-  $("#" + currentColor).addClass("pressed");
+  document.querySelector(`#${currentColor}`).classList.add("pressed");
   setTimeout(function () {
-    $("#" + currentColor).removeClass("pressed");
+    document.querySelector(`#${currentColor}`).classList.remove("pressed");
   }, 100);
 }
 
